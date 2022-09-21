@@ -3,9 +3,10 @@ import { convertPublicKey, getUserData } from "../common/utils";
 import {
     Text,
     Stack,
+    VStack,
     Input,
     Button,
-    HStack,
+    Center,
     CircularProgress
 } from "@chakra-ui/react";
 import { Account } from "./Account";
@@ -103,15 +104,16 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
                     value={keyPath}
                 />
                 {loading && (
-                    <Stack alignContent={"center"} justifyContent={"center"} width={"100%"}>
-                        {/*<Button backgroundColor={"#02D87E"} color={"white"} width={"100%"} size={"sm"} disabled={!accessToken || !keyPath} onClick={() => getPublicKey()}>Lookup Accounts</Button>*/}
-                        <Text>Retreiving Accounts</Text>
-                        <CircularProgress size={"2rem"} isIndeterminate color="green.300" />
-                    </Stack>
+                    <Center>
+                        <VStack>
+                            <Text>Retreiving Accounts</Text>
+                            <CircularProgress margin="2rem" size="3rem" isIndeterminate color="green.300" />
+                        </VStack>
+                    </Center>
                 )}
                 {publicKeyError && <Text margin={"1rem 0"} color={"red"}>{publicKeyError}</Text>}
             </Stack>
-            {flowPublicKey && (
+            {flowPublicKey && !loading && (
                 <Stack overflowY={"scroll"} height="15rem">
                     {accounts && accounts.length === 0 && (
                         <Text>No accounts found</Text>
