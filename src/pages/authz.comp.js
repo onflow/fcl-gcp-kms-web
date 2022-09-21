@@ -1,10 +1,17 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import * as fcl from "@onflow/fcl"
-import {signTransaction} from "../kms/KmsDevice.js";
-import {getKeyIdForKeyByAccountAddress} from "../flow/accounts.js";
+import { signTransaction } from "../kms/KmsDevice.js";
+import { getKeyIdForKeyByAccountAddress } from "../flow/accounts.js";
 import VirtualDevice from '../components/VirtualDevice';
-
+import { HeaderTitle } from '../components/HeaderTitle.js';
+import { getUserData } from '../common/utils.js';
+import { DisplayTransaction } from '../components/DisplayTransaction.js';
+import {
+  Text,
+  Stack,
+  Button,
+} from "@chakra-ui/react";
 const StyledContainer = styled.div`
   min-height: 20rem;
   display: flex;
@@ -44,17 +51,19 @@ const StyledErrorMesssage = styled.div`
 `
 
 const DEFAULT_MESSAGE = "Please connect to google using OAuth"
-const ADDRESS_MISMATCH_MESSAGE = 
-<StyledErrorMesssage>
-  The Flow account associated with you google account not match the account that is expected by the transaction.
-  <br/><br/>
-  Please ensure you are logged into the correct google account. It should be the same account when generating the key needed to sign the transaction.
-</StyledErrorMesssage>
+const ADDRESS_MISMATCH_MESSAGE =
+  <StyledErrorMesssage>
+    The Flow account associated with you google account not match the account that is expected by the transaction.
+    <br /><br />
+    Please ensure you are logged into the correct google account. It should be the same account when generating the key needed to sign the transaction.
+  </StyledErrorMesssage>
 
 export const Authz = ({ network = "local" }) => {
   const [signable, setSignable] = useState("")
   const [message, setMessage] = useState("");
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState(getUserData()?.account);
+
+  const { accessToken, gcpKeyPath } = getUserData();
 
   const handleCancel = () => {
     fcl.WalletUtils.close()
@@ -71,85 +80,99 @@ export const Authz = ({ network = "local" }) => {
     return unmount
   }, [])
 
-  useEffect(() => {
-      (async function getAddress() {
-          if (!signable) return;          
-          if (!account) return;
 
-          const { address, publicKey } = account;
+  const doSign = async () => {
+    console.log('get address', signable)
+    if (!signable) return;
+    if (!account) return;
 
-          if (!publicKey || !address) {
-            setMessage(DEFAULT_MESSAGE)
-            return
-          }
+    const { address, publicKey } = account;
+    console.log('using acct to sign', address)
 
-          setMessage("Please follow google OAuth sign in instructions")
+    if (!publicKey || !address) {
+      setMessage(DEFAULT_MESSAGE)
+      return
+    }
+    setMessage("Please follow google OAuth sign in instructions")
 
-          const keyId = await getKeyIdForKeyByAccountAddress(address, publicKey)
+    const keyId = await getKeyIdForKeyByAccountAddress(address, publicKey)
 
-          if (keyId === -1) {
-            setMessage(DEFAULT_MESSAGE)
-            return
-          }
+    if (keyId === -1) {
+      setMessage(DEFAULT_MESSAGE)
+      return
+    }
 
-          let signature;
+    let signature;
 
-          if (signable.voucher) {
-            const findPayloadSigners = (voucher) => {
-              // Payload Signers Are: (authorizers + proposer) - payer
-              let payload = new Set(voucher.authorizers)
-              payload.add(voucher.proposalKey.address)
-              payload.delete(voucher.payer)
-              return Array.from(payload).map(fcl.withPrefix)
-            }
-            
-            const findEnvelopeSigners = (voucher) => {
-              // Envelope Signers Are: (payer)
-              let envelope = new Set([voucher.payer])
-              return Array.from(envelope).map(fcl.withPrefix)
-            }
+    if (signable.voucher) {
+      const findPayloadSigners = (voucher) => {
+        // Payload Signers Are: (authorizers + proposer) - payer
+        let payload = new Set(voucher.authorizers)
+        payload.add(voucher.proposalKey.address)
+        payload.delete(voucher.payer)
+        return Array.from(payload).map(fcl.withPrefix)
+      }
+
+      const findEnvelopeSigners = (voucher) => {
+        // Envelope Signers Are: (payer)
+        let envelope = new Set([voucher.payer])
+        return Array.from(envelope).map(fcl.withPrefix)
+      }
+
+      let payloadSigners = findPayloadSigners(signable.voucher)
+      let envelopeSigners = findEnvelopeSigners(signable.voucher)
+
+
+      const isPayloadSigner = payloadSigners.includes(fcl.withPrefix(address))
+      const isEnvelopeSigner = envelopeSigners.includes(fcl.withPrefix(address))
+
+      if (!isPayloadSigner && !isEnvelopeSigner) {
+        setMessage(ADDRESS_MISMATCH_MESSAGE)
+        return;
+      }
+
+      const message = fcl.WalletUtils.encodeMessageFromSignable(signable, fcl.withPrefix(address)).substring(64)
+      console.log('tx message', message);
+      signature = await signTransaction(message, accessToken, gcpKeyPath, account)
+      console.log('signature', signature)
+    }
+
+    if (!signature) {
+      fcl.WalletUtils.decline("Google KMS did not sign this transaction.")
+      setMessage("Please login to your google account using OAuth, follow google login steps.")
+      return;
+    }
+
+    setMessage("Signature: " + signature)
+
+    fcl.WalletUtils.approve(
+      new fcl.WalletUtils.CompositeSignature(
+        fcl.withPrefix(address),
+        keyId,
+        signature
+      )
+    )
+  }
+
+  const setFlowAccount = (account) => {
+    // store account
+    setAccount(account);
+  }
   
-            let payloadSigners = findPayloadSigners(signable.voucher)
-            let envelopeSigners = findEnvelopeSigners(signable.voucher)
-
-  
-            const isPayloadSigner = payloadSigners.includes(fcl.withPrefix(address))
-            const isEnvelopeSigner = envelopeSigners.includes(fcl.withPrefix(address))
-  
-            if (!isPayloadSigner && !isEnvelopeSigner) {
-              setMessage(ADDRESS_MISMATCH_MESSAGE)
-              setAccount(null)
-              return;
-            }
-
-            const message = fcl.WalletUtils.encodeMessageFromSignable(signable, fcl.withPrefix(address)).substring(64)
-  
-            signature = await signTransaction(message)
-          }
-
-          if (!signature) {
-              fcl.WalletUtils.decline("Google KMS did not sign this transaction.")
-              setMessage("Please login to your google account using OAuth, follow google login steps.")
-              return;
-          }
-
-          setMessage("Signature: " + signature)
-
-          fcl.WalletUtils.approve(
-            new fcl.WalletUtils.CompositeSignature(
-              fcl.withPrefix(address),
-              keyId,
-              signature
-            )
-          )
-      })();
-  }, [signable, account])
-
+  console.log('selected account', account)
   return (
-      <StyledContainer>
-        {process.env.REACT_APP_ALERT_MESSAGE && <StyledAlertMessage dangerouslySetInnerHTML={{__html: process.env.REACT_APP_ALERT_MESSAGE}}/>}
-        <VirtualDevice account={account} onGetAccount={account => setAccount(account)} handleCancel={handleCancel} />
-        <StyledMessageWrapper>{ message && <StyledMessage>{message}</StyledMessage> }</StyledMessageWrapper>
-      </StyledContainer>    
+    <StyledContainer>
+      {process.env.REACT_APP_ALERT_MESSAGE && <StyledAlertMessage dangerouslySetInnerHTML={{ __html: process.env.REACT_APP_ALERT_MESSAGE }} />}
+      {!account && <VirtualDevice account={account} onGetAccount={account => setFlowAccount(account)} handleCancel={handleCancel} />}
+      {account && (
+        <>
+          <HeaderTitle address={account?.address} />
+          <DisplayTransaction signable={signable} account={account} />
+          <Button disabled={!account} width="80%" padding={"1rem 2rem"} backgroundColor={"#02D87E"} color={"white"} onClick={() => doSign()}>Sign Transaction</Button>
+          <StyledMessageWrapper>{message && <StyledMessage>{message}</StyledMessage>}</StyledMessageWrapper>
+        </>
+      )}
+
+    </StyledContainer>
   )
 }

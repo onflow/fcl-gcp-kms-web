@@ -7,7 +7,7 @@ import {
 
 export const INITIAL_PK_MESSAGE = "Press the button below to login using OAuth."
 export const VIEW_PK_MESSAGE = "View the Public Key displayed from Google KMS key"
-export const CONNECTING_MESSAGE = <Text>Attempting to connect to google using OAuth.</Text>
+export const CONNECTING_MESSAGE = <Text>Connecting to google using OAuth.</Text>
 export const CONNECTION_ERROR_MESSAGE = 
 <div>
   <TextCenter>Sorry, we couldn't connect to google using OAuth. </TextCenter><br />

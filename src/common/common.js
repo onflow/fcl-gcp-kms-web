@@ -48,12 +48,17 @@ export const Row = styled.div`
 `
 
 export const GoogleKMSTitle = styled.div`
+  display: flex;
   margin-left: 0.5rem;
   transform: translateY(4px);
   font-weight: 400;
-  font-size: 2rem;
+  font-size: 2.5rem;
   text-decoration: none;
   color: #2a2825;
+  > span {
+    margin-top: 0.25rem;
+    font-size: 1rem;
+  }
 `
 
 export const GoogleKmsImage = styled.img`

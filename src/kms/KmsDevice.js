@@ -1,94 +1,127 @@
-
-const SCHEME = 0x301;
-
-
+import { convert, getDigest, convertTxToGcpPayload, getPayloadOnly } from "../common/utils";
+import * as sdk from "@onflow/sdk"
 export const getVersion = async () => {
-    let major = 0;
-    let minor = 0;
-    let patch = 0;
+  let major = 0;
+  let minor = 0;
+  let patch = 0;
 
 
-    return `${major}.${minor}.${patch}`
+  return `${major}.${minor}.${patch}`
 };
 
 export const appInfo = async () => {
-    // get app info
+  // get app info
 };
 
 export const getAddressAndPublicKey = async () => {
-    console.log("KMS.getAddressAndPublicKey")
+  console.log("KMS.getAddressAndPublicKey")
 
-    let address;
-    let publicKey;
+  let address;
+  let publicKey;
 
-    try {
-        // get kms public key and convert to flow public key
+  try {
+    // get kms public key and convert to flow public key
 
-        // get all accounts public key is associated.
-    } finally {
-        
-    }
+    // get all accounts public key is associated.
+  } finally {
 
-    
-    console.log("TODO: get accounts and publick key")
-    // todo get real info
-    return {
-        address: "0x4cfab7e565eb93e1",
-        publicKey: "02d6ff8797f6db9ae07b28d9779be3bb17fd31df2de86780cdf707c2cf9221eae3fcdb31d03b9dcba67ae2fed6839be9542e511a36f4c620a5ac8e2ea5ce014d",
-    };
+  }
+
+
+  console.log("TODO: get accounts and publick key")
+  // TODO: get real info
+  return {
+    address: "display address",
+    publicKey: "display public key",
+  };
 };
 
-export const setAddress = async (address) => {    
-    console.log("KMS.setAddress")
-
-    
-
-    try {
-       // store the address
+export const setAddress = async (address) => {
+  console.log("KMS.setAddress")
 
 
-    } finally {
-       
-    }
+
+  try {
+    // store the address
+
+
+  } finally {
+
+  }
 };
 
 export const clearAddress = async () => {
-    console.log("KMS.clearAddress")
+  console.log("KMS.clearAddress")
 
 
-    try {
-        // clear the address so user can select another one
+  try {
+    // clear the address so user can select another one
 
-    } finally {
-        
-    }
+  } finally {
+
+  }
 };
 
 export const showAddressAndPubKey = async () => {
-    console.log("KMS.showAddress")
+  console.log("KMS.showAddress")
 
-    
-    
-    try {
-    
+
+
+  try {
+
 
     // show key information
-    } finally {
-        
-    }
+  } finally {
+
+  }
+}
+const KMS_REST_ENDPOINT = "https://cloudkms.googleapis.com/v1"
+const getSigningUrl = (gcpKeyPath) => {
+  return `${KMS_REST_ENDPOINT}/${gcpKeyPath}:asymmetricSign`;
 }
 
-export const signTransaction = async (tx) => {
-    console.log("KMS.signTransaction")
+export const signTransaction = async (rlp, accessToken, gcpKeyPath, account) => {
+  console.log("KMS.signTransaction")
+  const kmsUrl = getSigningUrl(gcpKeyPath)
+  let sig = null;
+  const message = getPayloadOnly(rlp);
+  try {
+    const response = await fetch(kmsUrl, {
+      method: "POST",
+      cache: "no-cache",
+      headers: {
+        'authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+      redirect: 'follow',
+      body: JSON.stringify({
+        digest: getDigest(message),
+      })
+    }).catch(e => {
+      console.log('error', e)
+    })
+    if (response.status === 200) {
+      // parse up result and package up sig
+      const result = await response.json();
+      const kmsSignature = result.signature
+      sig = convert(kmsSignature);
+      //const env = prepareSignedEnvelope(rlp, keyId, sig);
+      //postSignatureToApi(signatureRequestId, env);
 
-   try {
-    //todo send tx to kms for signing
-    } finally {
-        
+      console.log('fcl rlp', rlp);
+      console.log('base64 message', message);
+      console.log('sig', sig);
+
+    } else {
+      console.error("error signing transaction");
+      console.log(`KMS Service returned error ${response.status}, check network status`)
     }
+  } finally {
+    console.log("done signing")
+  }
 
-    // return signed tx
-    return ""
+  // return signed tx
+  return sig
 };
 
 // remove leading byte from public key
