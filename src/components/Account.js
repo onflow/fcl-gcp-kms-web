@@ -18,7 +18,8 @@ export const Account = ({ account, setAccount }) => {
             .then(fcl.decode)
             .catch(e => setBalance("-"));
         const bal = parseInt(account?.balance || 0)
-        setBalance(bal / 100000000);
+        const amt = (bal / 100000000).toFixed(4);
+        setBalance(amt);
     }
 
     useEffect(() => {
@@ -26,7 +27,7 @@ export const Account = ({ account, setAccount }) => {
     }, [])
 
     return (
-        <Button onClick={() => setAccount(account)} height={"100%"} borderRadius={"0.5rem"} border={"1px"} borderColor={"#E8E8E8"} padding={"0.75rem"} spacing={"0.1rem"} backgroundColor={"#02D87E"}>
+        <Button onClick={() => setAccount(account)} height={"100%"} borderRadius={"0.5rem"} border={"1px"} borderColor={"#E8E8E8"} padding={"0.5rem"} spacing={"0.1rem"} backgroundColor={"#02D87E"}>
             <Stack fontSize={"1rem"} >
                 <HStack spacing={"0.75rem"}>
                     <Text>{address}</Text>

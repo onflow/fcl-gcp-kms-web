@@ -102,7 +102,6 @@ const VirtualDevice = ({ account, onGetAccount, handleCancel }) => {
 
   // -- loading google scripts -- //
 
-  console.log('isLoggingIn', isLoggingIn)
   return (
     <Stack>
       <HeaderTitle address={address} />

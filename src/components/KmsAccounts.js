@@ -5,7 +5,6 @@ import {
     Stack,
     VStack,
     Input,
-    Button,
     Center,
     CircularProgress
 } from "@chakra-ui/react";
@@ -17,14 +16,16 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
     const [keyPath, setKeyPath] = useState(getUserData()?.gcpKeyPath)
     const [publicKeyError, setPublicKeyError] = useState(null);
     const [flowPublicKey, setFlowPublicKey] = useState(null);
-    const [accounts, setAccounts] = useState(null)
-    const [loading, setLoading] = useState(true);
+    const [accounts, setAccounts] = useState(null);
+    const [loadingMessage, setLoadingMessage] = useState(null);
 
     const getPublicKeyUrl = () => {
         return `${CONTENT_KMS_REST_ENDPOINT}/${keyPath}/publicKey`;
     }
 
     const lookup = async (publicKey) => {
+        setLoadingMessage("Loading Accounts")
+        console.log('look up', publicKey)
         const url = `${PUBLIC_KEY_SERVICE}/key/${publicKey}`;
         const payload = await fetch(url, {
             method: "GET",
@@ -35,14 +36,12 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
             redirect: 'follow',
         }).catch(e => {
             console.log('fetch key accounts error', e)
-            setLoading(false)
-        });
+        }).finally(() => setLoadingMessage(null));
         console.log(url)
         if (payload && payload.ok) {
             const pk = await payload.json();
             console.log(pk.accounts);
             setAccounts(pk.accounts)
-            setLoading(false)
         } else {
             console.log("Could not get accounts from key indexer")
             setPublicKeyError("Could not load accounts")
@@ -51,7 +50,7 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
     }
 
     const getPublicKey = async () => {
-        setLoading(true)
+        setLoadingMessage("Loading account public key")
         setPublicKeyError("")
         setGcpKeyPath(keyPath)
         const url = getPublicKeyUrl()
@@ -65,15 +64,14 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
             redirect: 'follow',
         }).catch(e => {
             console.log('error', e)
-            setLoading(false)
-        })
+        }).finally(() => setLoadingMessage(null))
 
         if (response && response.ok) {
             const { pem } = await response.json();
             const pubKey = await convertPublicKey(pem)
             console.log('flow pub key:', pubKey)
             setFlowPublicKey(pubKey);
-            lookup(pubKey)
+            if (keyPath) lookup(pubKey)
         } else {
             setPublicKeyError("service responed with", response?.status);
             console.log('service responded with code', response?.status)
@@ -88,8 +86,9 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
     }
 
     useEffect(() => {
-        if (accessToken) getPublicKey()
-    }, [accessToken])
+        console.log('keyPath', keyPath)
+        if (accessToken && keyPath) getPublicKey()
+    }, [accessToken, keyPath])
 
     return (
         <Stack width={"100%"}>
@@ -103,17 +102,17 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
                     onChange={(e) => setKeyPath(e.target.value)}
                     value={keyPath}
                 />
-                {loading && (
+                {loadingMessage && (
                     <Center>
                         <VStack>
-                            <Text>Retreiving Accounts</Text>
+                            <Text>{loadingMessage}</Text>
                             <CircularProgress margin="2rem" size="3rem" isIndeterminate color="green.300" />
                         </VStack>
                     </Center>
                 )}
                 {publicKeyError && <Text margin={"1rem 0"} color={"red"}>{publicKeyError}</Text>}
             </Stack>
-            {flowPublicKey && !loading && (
+            {flowPublicKey && !loadingMessage && (
                 <Stack overflowY={"scroll"} height="15rem">
                     {accounts && accounts.length === 0 && (
                         <Text>No accounts found</Text>

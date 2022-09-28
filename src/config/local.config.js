@@ -9,7 +9,6 @@ export function LocalConfig() {
       //.put("accessNode.api", EMULATOR_HOST)
       .put("accessNode.api", "https://rest-mainnet.onflow.org")
       //.put("accessNode.api", "https://rest-testnet.onflow.org")
-      .put("hardwareWallet.api", "http://localhost:8081")
   }, [])
   return null
 }
