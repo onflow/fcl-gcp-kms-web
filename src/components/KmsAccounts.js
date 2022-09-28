@@ -25,7 +25,6 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
 
     const lookup = async (publicKey) => {
         setLoadingMessage("Loading Accounts")
-        console.log('look up', publicKey)
         const url = `${PUBLIC_KEY_SERVICE}/key/${publicKey}`;
         const payload = await fetch(url, {
             method: "GET",
