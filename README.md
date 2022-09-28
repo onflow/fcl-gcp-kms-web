@@ -1,56 +1,27 @@
-# FCL/gcp kms Wallet 
+# FCL gcp kms Wallet 
 
 ## Developing locally
 
 ### Install
 
 ```shell script
-yarn install
+yarn
 ```
 
-### Start the app
 
+## Building & Starting
 ```shell script
-yarn run start
-```
-
-## Building & publishing
-
-### Emulator
-
-```shell script
-# build the React app
-yarn run build-emulator
-
-# build the Docker image
-docker build -t gcr.io/dl-flow/fcl-gcp-kms-web-emulator .
-
-# publish the Docker image
-docker push gcr.io/dl-flow/fcl-gcp-kms-web-emulator
-```
-
-### Testnet
-
-```shell script
-# build the React app
-yarn run build-testnet
-
-# build the Docker image
-docker build -t gcr.io/dl-flow/fcl-gcp-kms-web-testnet .
-
-# publish the Docker image
-docker push gcr.io/dl-flow/fcl-gcp-kms-web-testnet
+yarn build
+yarn start
 ```
 
 ### Mainnet
 
-```shell script
-# build the React app
-yarn run build-mainnet
-
-# build the Docker image
-docker build -t gcr.io/dl-flow/fcl-gcp-kms-web-mainnet .
-
-# publish the Docker image
-docker push gcr.io/dl-flow/fcl-gcp-kms-web-mainnet
+This is a prototype google oauth / kms wallet
+Start the process and configure dapps at it using fcl
+```typescript
+fcl.config()
+.put("challenge.handshake", "http://localhost:3000/local/authn")
 ```
+
+In the current state, it only supports mainnet. This wallet depends on the key-indexer service, which only supports reverse public key look ups on mainnet. 
