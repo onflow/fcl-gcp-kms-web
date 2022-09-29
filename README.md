@@ -1,4 +1,7 @@
-# FCL gcp kms Wallet 
+*THIS IS ALPHA SOFTWARE, USE AT YOUR OWN RISK*
+
+# FCL gcp kms Wallet
+
 
 ## Developing locally
 
