@@ -15,7 +15,7 @@ import { KmsAccounts } from './KmsAccounts';
 import { HeaderTitle } from './HeaderTitle';
 import { setUserData } from '../common/utils.js';
 
-const VirtualDevice = ({ account, onGetAccount, handleCancel }) => {
+const VirtualDevice = ({ network, account, onGetAccount, handleCancel }) => {
   const [hasUserStarted, setHasUserStarted] = useState(false);
   const [gcpKeyPath, setGcpKeyPath] = useState(null);
   const [address, setAddress] = useState(null);
@@ -114,7 +114,7 @@ const VirtualDevice = ({ account, onGetAccount, handleCancel }) => {
           </Stack>
         }
         {accessToken && (
-          <KmsAccounts accessToken={accessToken} setActiveAccount={activateAccount} setGcpKeyPath={setGcpKeyPath}/>
+          <KmsAccounts network={network} accessToken={accessToken} setActiveAccount={activateAccount} setGcpKeyPath={setGcpKeyPath}/>
         )}
         {
           hasUserStarted && !accessToken && CONNECTING_MESSAGE

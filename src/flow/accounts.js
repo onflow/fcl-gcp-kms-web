@@ -36,7 +36,7 @@ export const getAccount = async (publicKey) => {
   const response = await fetch(url)
     .then(response => {
       if (response.status === 404) {
-        return {};
+        return null;
       }
 
       return response.json();

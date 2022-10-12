@@ -4,7 +4,7 @@ import {config} from "@onflow/fcl"
 export function TestnetConfig() {
   useEffect(() => {
     config()
-      .put("accessNode.api", "https://access-testnet.onflow.org")
+      .put("accessNode.api", "https://rest-testnet.onflow.org")
   }, [])
   return null
 }

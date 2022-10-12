@@ -105,7 +105,7 @@ export const Authn = ({ network = "local" }) => {
     return (
         <StyledContainer>
             {process.env.REACT_APP_ALERT_MESSAGE && <StyledAlertMessage dangerouslySetInnerHTML={{__html: process.env.REACT_APP_ALERT_MESSAGE}}/>}
-            <VirtualDevice account={account} onGetAccount={account => setAccount(account)} handleCancel={handleCancel} />
+            <VirtualDevice network={network} account={account} onGetAccount={account => setAccount(account)} handleCancel={handleCancel} />
         </StyledContainer>    
     )
 }

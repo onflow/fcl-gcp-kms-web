@@ -11,8 +11,9 @@ import {
 import { Account } from "./Account";
 const CONTENT_KMS_REST_ENDPOINT = "https://content-cloudkms.googleapis.com/v1"
 const PUBLIC_KEY_SERVICE = process.env.REACT_APP_MAINNET_KEY_INDEXER_SERVICE;
+const PUBLIC_KEY_SERVICE_TESTNET = process.env.REACT_APP_TESTNET_KEY_INDEXER_SERVICE;
 
-export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) => {
+export const KmsAccounts = ({ network, accessToken, setActiveAccount, setGcpKeyPath }) => {
     const [keyPath, setKeyPath] = useState(getUserData()?.gcpKeyPath)
     const [publicKeyError, setPublicKeyError] = useState(null);
     const [flowPublicKey, setFlowPublicKey] = useState(null);
@@ -25,7 +26,11 @@ export const KmsAccounts = ({ accessToken, setActiveAccount, setGcpKeyPath }) =>
 
     const lookup = async (publicKey) => {
         setLoadingMessage("Loading Accounts")
-        const url = `${PUBLIC_KEY_SERVICE}/key/${publicKey}`;
+        let keyIndexUrl = PUBLIC_KEY_SERVICE;
+        if (network === "testnet") {
+            keyIndexUrl = PUBLIC_KEY_SERVICE_TESTNET
+        }
+        const url = `${keyIndexUrl}/key/${publicKey}`;
         const payload = await fetch(url, {
             method: "GET",
             cache: "no-cache",
