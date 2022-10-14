@@ -81,7 +81,7 @@ export const Authn = ({ network = "local" }) => {
                   f_type: "Service",
                   f_vsn: "1.0.0",
                   type: "user-signature",
-                  method: "IFRAME/RPC",
+                  method: "DATA",
                   uid: "fcl-goog-kms-authz",
                   endpoint: `${window.location.origin}/${network}/sign`,
                   identity: {
