@@ -121,16 +121,14 @@ export const Sign = ({ network = "local" }) => {
     }
 
     console.log('selected account', account)
+    console.log('signing message')
     return (
         <StyledContainer>
             {process.env.REACT_APP_ALERT_MESSAGE && <StyledAlertMessage dangerouslySetInnerHTML={{ __html: process.env.REACT_APP_ALERT_MESSAGE }} />}
             {!account && <VirtualDevice account={account} onGetAccount={account => setFlowAccount(account)} handleCancel={handleCancel} />}
             {account && (
                 <>
-                    <HeaderTitle address={account?.address} />
-                    <Text>{message}</Text>
-                    <Button disabled={!account} width="80%" padding={"1rem 2rem"} backgroundColor={"#02D87E"} color={"white"} onClick={() => doSign()}>Sign Transaction</Button>
-                    <StyledMessageWrapper>{message && <StyledMessage>{message}</StyledMessage>}</StyledMessageWrapper>
+                    <Button disabled={!account} width="80%" padding={"1rem 2rem"} backgroundColor={"#02D87E"} color={"white"} onClick={() => doSign()}>Sign Message</Button>
                 </>
             )}
 
