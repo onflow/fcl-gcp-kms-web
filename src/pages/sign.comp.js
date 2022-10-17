@@ -6,7 +6,7 @@ import { getKeyIdForKeyByAccountAddress } from "../flow/accounts.js";
 import VirtualDevice from '../components/VirtualDevice';
 import { HeaderTitle } from '../components/HeaderTitle.js';
 import { getUserData } from '../common/utils.js';
-import { DisplayTransaction } from '../components/DisplayTransaction.js';
+import { DisplayMessage } from '../components/DisplayMessage.js';
 import {
     Text,
     Stack,
@@ -129,7 +129,8 @@ export const Sign = ({ network = "local" }) => {
             {!account && <VirtualDevice account={account} onGetAccount={account => setFlowAccount(account)} handleCancel={handleCancel} />}
             {account && (
                 <>
-                    <Text>{message?.message}</Text>
+                    <Text>Request for Signature</Text>
+                    <DisplayMessage message={message?.message} />
                     <Button disabled={!account} width="80%" padding={"1rem 2rem"} backgroundColor={"#02D87E"} color={"white"} onClick={() => doSign()}>Sign Message</Button>
                 </>
             )}
