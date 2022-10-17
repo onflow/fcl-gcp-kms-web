@@ -94,7 +94,8 @@ export const Sign = ({ network = "local" }) => {
             return
         }
 
-        const signature = await signTransaction(message, accessToken, gcpKeyPath, account)
+        console.log('sign this message', message?.message)
+        const signature = await signTransaction(message?.message, accessToken, gcpKeyPath, account)
         console.log('signature', signature)
 
 
@@ -121,13 +122,14 @@ export const Sign = ({ network = "local" }) => {
     }
 
     console.log('selected account', account)
-    console.log('signing message')
+    console.log('signing message', message)
     return (
         <StyledContainer>
             {process.env.REACT_APP_ALERT_MESSAGE && <StyledAlertMessage dangerouslySetInnerHTML={{ __html: process.env.REACT_APP_ALERT_MESSAGE }} />}
             {!account && <VirtualDevice account={account} onGetAccount={account => setFlowAccount(account)} handleCancel={handleCancel} />}
             {account && (
                 <>
+                    <Text>{message?.message}</Text>
                     <Button disabled={!account} width="80%" padding={"1rem 2rem"} backgroundColor={"#02D87E"} color={"white"} onClick={() => doSign()}>Sign Message</Button>
                 </>
             )}

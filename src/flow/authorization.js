@@ -32,6 +32,7 @@ export const authorization = async (account = {}) => {
   }
 
   const signingFunction = async (data) => {
+    console.error("Is this used? Need to get use case")
     const signature = await signTransaction(data);
     return {
       address: deviceAccountInfo.address,

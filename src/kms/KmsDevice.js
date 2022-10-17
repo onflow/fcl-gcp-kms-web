@@ -16,12 +16,9 @@ export const appInfo = async () => {
 export const getAddressAndPublicKey = async () => {
   console.log("KMS.getAddressAndPublicKey")
 
-  let address;
-  let publicKey;
-
   try {
-    // get kms public key and convert to flow public key
-
+    // todo: implement this. get kms public key and convert to flow public key
+    console.log("Not Implemented")
     // get all accounts public key is associated.
   } finally {
 
@@ -36,39 +33,11 @@ export const getAddressAndPublicKey = async () => {
   };
 };
 
-export const setAddress = async (address) => {
-  console.log("KMS.setAddress")
-
-
-
-  try {
-    // store the address
-
-
-  } finally {
-
-  }
-};
-
-export const clearAddress = async () => {
-  console.log("KMS.clearAddress")
-
-
-  try {
-    // clear the address so user can select another one
-
-  } finally {
-
-  }
-};
-
 export const showAddressAndPubKey = async () => {
   console.log("KMS.showAddress")
-
-
-
   try {
-
+    // TODO: do implementation
+    console.error("Not implemented")
 
     // show key information
   } finally {
@@ -80,11 +49,10 @@ const getSigningUrl = (gcpKeyPath) => {
   return `${KMS_REST_ENDPOINT}/${gcpKeyPath}:asymmetricSign`;
 }
 
-export const signTransaction = async (rlp, accessToken, gcpKeyPath, account) => {
+export const signTransaction = async (message, accessToken, gcpKeyPath) => {
   console.log("KMS.signTransaction")
   const kmsUrl = getSigningUrl(gcpKeyPath)
   let sig = null;
-  const message = getPayloadOnly(rlp);
   try {
     const response = await fetch(kmsUrl, {
       method: "POST",
@@ -105,10 +73,7 @@ export const signTransaction = async (rlp, accessToken, gcpKeyPath, account) => 
       const result = await response.json();
       const kmsSignature = result.signature
       sig = convert(kmsSignature);
-      //const env = prepareSignedEnvelope(rlp, keyId, sig);
-      //postSignatureToApi(signatureRequestId, env);
 
-      console.log('fcl rlp', rlp);
       console.log('base64 message', message);
       console.log('sig', sig);
 
@@ -123,9 +88,3 @@ export const signTransaction = async (rlp, accessToken, gcpKeyPath, account) => 
   // return signed tx
   return sig
 };
-
-// remove leading byte from public key
-const convertToRawPublicKey = (publicKey) => publicKey.slice(1).toString("hex");
-
-// remove 65th byte from signature
-const convertToRawSignature = (signature) => signature.slice(0, -1).toString("hex");

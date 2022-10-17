@@ -133,7 +133,7 @@ export const Authz = ({ network = "local" }) => {
 
       const message = fcl.WalletUtils.encodeMessageFromSignable(signable, fcl.withPrefix(address)).substring(64)
       console.log('tx message', message);
-      signature = await signTransaction(message, accessToken, gcpKeyPath, account)
+      signature = await signTransaction(message, accessToken, gcpKeyPath)
       console.log('signature', signature)
     }
 
