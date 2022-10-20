@@ -131,9 +131,11 @@ export const Authz = ({ network = "local" }) => {
         return;
       }
 
+      console.log(address, 'isPayloadSigner', isPayloadSigner, 'isEnvelopeSigner', isEnvelopeSigner, 'signable', signable);
       const message = fcl.WalletUtils.encodeMessageFromSignable(signable, fcl.withPrefix(address)).substring(64)
-      console.log('tx message', message);
-      signature = await signTransaction(message, accessToken, gcpKeyPath)
+      const prepended = "464c4f572d56302e302d7472616e73616374696f6e0000000000000000000000" + message; 
+      console.log('tx prepended', prepended);
+      signature = await signTransaction(prepended, accessToken, gcpKeyPath);
       console.log('signature', signature)
     }
 
