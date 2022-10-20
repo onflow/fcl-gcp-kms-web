@@ -132,10 +132,9 @@ export const Authz = ({ network = "local" }) => {
       }
 
       console.log(address, 'isPayloadSigner', isPayloadSigner, 'isEnvelopeSigner', isEnvelopeSigner, 'signable', signable);
-      const message = fcl.WalletUtils.encodeMessageFromSignable(signable, fcl.withPrefix(address)).substring(64)
-      const prepended = "464c4f572d56302e302d7472616e73616374696f6e0000000000000000000000" + message; 
-      console.log('tx prepended', prepended);
-      signature = await signTransaction(prepended, accessToken, gcpKeyPath);
+      const message = fcl.WalletUtils.encodeMessageFromSignable(signable, fcl.withPrefix(address));
+      console.log('tx message', message);
+      signature = await signTransaction(message, accessToken, gcpKeyPath);
       console.log('signature', signature)
     }
 
@@ -160,7 +159,7 @@ export const Authz = ({ network = "local" }) => {
     // store account
     setAccount(account);
   }
-  
+
   console.log('selected account', account)
   return (
     <StyledContainer>
