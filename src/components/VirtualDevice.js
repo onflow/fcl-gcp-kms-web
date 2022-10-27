@@ -72,7 +72,6 @@ const VirtualDevice = ({ network, account, onGetAccount, handleCancel }) => {
             KEY_SCOPE)) {
             console.log('user has scope, saving access token')
             setAccessToken(tokenResponse.access_token)
-            setMessage("gcp account found")
           } else {
             setLoginError(`account needs scope ${KEY_SCOPE}`)
           }
