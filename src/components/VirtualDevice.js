@@ -26,10 +26,7 @@ const VirtualDevice = ({ network, account, onGetAccount, handleCancel }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [loginError, setLoginError] = useState(null)
 
-  //const KEY_LOC_LOCATION = "multisig:kms:location"
-  //const CLIENT_ID = "769260085272-oif0n1ut40vn6p8ldhvp4c4fdkfm3f4d.apps.googleusercontent.com";
-  // new kms wallet client id
-  const CLIENT_ID = "1078314026786-bvbbqgjh148uk1s7e3vu13h6da5lusmf.apps.googleusercontent.com";
+  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
   const KEY_SCOPE = "https://www.googleapis.com/auth/cloud-platform";
   const DISCOVERY_DOC = "https://docs.googleapis.com/$discovery/rest?version=v1";
   const GOOGLE_API_URL = "https://apis.google.com/js/api.js";
@@ -40,7 +37,7 @@ const VirtualDevice = ({ network, account, onGetAccount, handleCancel }) => {
     window?.gapi.client.init({
       // NOTE: OAuth2 'scope' and 'client_id' parameters have moved to initTokenClient().
     })
-      .then(function () {  // Load the Calendar API discovery document.
+      .then(function () {  
         window?.gapi.client.load(DISCOVERY_DOC);
       });
   }
@@ -60,6 +57,7 @@ const VirtualDevice = ({ network, account, onGetAccount, handleCancel }) => {
   });
 
   const gGsiSignIn = () => {
+    setMessage("")
     setHasUserStarted(true)
     setIsLoggingIn(true)
     console.log('loaded', GOOGLE_CLIENT_URL)
@@ -74,6 +72,7 @@ const VirtualDevice = ({ network, account, onGetAccount, handleCancel }) => {
             KEY_SCOPE)) {
             console.log('user has scope, saving access token')
             setAccessToken(tokenResponse.access_token)
+            setMessage("gcp account found")
           } else {
             setLoginError(`account needs scope ${KEY_SCOPE}`)
           }
