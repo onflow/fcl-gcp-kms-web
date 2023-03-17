@@ -1,4 +1,3 @@
-import Keypairs from "@root/keypairs"
 import { Buffer } from 'buffer';
 import * as crypto from "crypto-browserify";
 import { decode, encode } from "rlp";
@@ -19,7 +18,6 @@ const rightPaddedHexBuffer = (value, pad) =>
 
 
 export const convertPublicKey = async (kmsPublicKey) => {
-    //const jwk = await Keypairs.import({ pem: kmsPublicKey });
     const keyObjFromPem = new keyutils.Key('pem', kmsPublicKey);
     const jwk = await keyObjFromPem.export('jwk');
     
