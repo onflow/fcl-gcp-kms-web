@@ -11,6 +11,16 @@ export const DisplayTransaction = ({ signable, account }) => {
 
     console.log(signable)
 
+    function hexToString(hexStr) {
+        var result = "";
+        for (var i = 0; i < hexStr.length; i += 2) {
+            var hex = hexStr.substring(i, i + 2);
+            var char = String.fromCharCode(parseInt(hex, 16));
+            result += char;
+        }
+        return result;
+    }
+    
     return (
         <Stack width="80%" padding="0.5rem" minHeight={"10rem"}>
             <HStack><Text fontSize="0.75rem">Address:</Text><Text>{signable.addr}</Text></HStack>
@@ -19,7 +29,7 @@ export const DisplayTransaction = ({ signable, account }) => {
             {vis && (
                 <Stack overflowY="scroll" borderColor='gray.200' borderWidth="1px">
                     <Text fontSize="0.75rem" width="100%" size="0.5rem">
-                        {signable?.cadence}
+                        {hexToString(signable?.cadence)}
                     </Text>
                 </Stack>
             )}
