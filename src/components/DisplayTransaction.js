@@ -5,22 +5,13 @@ import {
     HStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { hexToString } from "../utils";
 
 export const DisplayTransaction = ({ signable, account }) => {
     const [vis, setVis] = useState(false)
 
     console.log(signable)
 
-    function hexToString(hexStr) {
-        var result = "";
-        for (var i = 0; i < hexStr.length; i += 2) {
-            var hex = hexStr.substring(i, i + 2);
-            var char = String.fromCharCode(parseInt(hex, 16));
-            result += char;
-        }
-        return result;
-    }
-    
     return (
         <Stack width="80%" padding="0.5rem" minHeight={"10rem"}>
             <HStack><Text fontSize="0.75rem">Address:</Text><Text>{signable.addr}</Text></HStack>

@@ -2,6 +2,7 @@ import {
     Text,
     Stack,
 } from "@chakra-ui/react";
+import { hexToString } from "../utils";;
 
 export const DisplayMessage = ({ message }) => {
     console.log(message)
@@ -9,7 +10,7 @@ export const DisplayMessage = ({ message }) => {
         <Stack width="80%" padding="0.5rem" minHeight={"10rem"}>
             <Stack overflowY="scroll" borderColor='gray.200' borderWidth="1px">
                 <Text fontSize="0.75rem" width="100%" size="0.5rem">
-                    {message}
+                    {hexToString(message)}
                 </Text>
             </Stack>
         </Stack>

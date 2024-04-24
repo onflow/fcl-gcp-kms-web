@@ -118,3 +118,13 @@ export const setUserData = (userData) => {
         console.error("window.localStorage not found")
     }
 }
+
+export const hexToString = (hexStr) => {
+    var result = "";
+    for (var i = 0; i < hexStr.length; i += 2) {
+        var hex = hexStr.substring(i, i + 2);
+        var char = String.fromCharCode(parseInt(hex, 16));
+        result += char;
+    }
+    return result;
+}
