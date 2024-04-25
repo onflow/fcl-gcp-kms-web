@@ -15,6 +15,7 @@ import { Authz } from "./pages/authz.comp"
 import { ShowKey } from "./pages/showkey.comp"
 import { extendTheme } from '@chakra-ui/react'
 import { Sign } from './pages/sign.comp';
+import { ServiceStatus } from './pages/status.comp';
 
 window.fcl = fcl
 window.types = types
@@ -129,6 +130,7 @@ ReactDOM.render(
                   <Route path="/mainnet/authz" component={props => <Authz {...props} network="mainnet" debug={DEBUG} />} exact />
                   <Route path="/testnet/sign" component={props => <Sign {...props} network="testnet" debug={DEBUG} />} exact />
                   <Route path="/mainnet/sign" component={props => <Sign {...props} network="mainnet" debug={DEBUG} />} exact />
+                  <Route path="/" component={ServiceStatus} exact />
                   <Route component={FourOhFour} />
                 </Switch>
               </div>

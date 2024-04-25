@@ -121,10 +121,13 @@ export const setUserData = (userData) => {
 
 export const hexToString = (hexStr) => {
     var result = "";
+    if (!hexStr) return result;
     for (var i = 0; i < hexStr.length; i += 2) {
         var hex = hexStr.substring(i, i + 2);
-        var char = String.fromCharCode(parseInt(hex, 16));
-        result += char;
+        var charCode = parseInt(hex, 16);
+        if (charCode > 31 && charCode < 127) {  // ASCII printable characters range
+            result += String.fromCharCode(charCode);
+        }
     }
     return result;
 }

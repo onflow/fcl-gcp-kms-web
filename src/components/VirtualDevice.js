@@ -32,6 +32,7 @@ const VirtualDevice = ({ network, account, onGetAccount, handleCancel }) => {
   const GOOGLE_API_URL = "https://apis.google.com/js/api.js";
   const GOOGLE_CLIENT_URL = "https://accounts.google.com/gsi/client";
 
+
   const noop = () => { };
   function gapiInit() {
     window?.gapi.client.init({

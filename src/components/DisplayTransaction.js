@@ -5,7 +5,7 @@ import {
     HStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { hexToString } from "../utils";
+import { hexToString } from "../common/utils";
 
 export const DisplayTransaction = ({ signable, account }) => {
     const [vis, setVis] = useState(false)
@@ -13,13 +13,13 @@ export const DisplayTransaction = ({ signable, account }) => {
     console.log(signable)
 
     return (
-        <Stack width="80%" padding="0.5rem" minHeight={"10rem"}>
+        <Stack width="80%" padding="0.5rem" minHeight={"20rem"}>
             <HStack><Text fontSize="0.75rem">Address:</Text><Text>{signable.addr}</Text></HStack>
             <HStack><Text fontSize="0.75rem">KeyId:</Text><Text>{signable.keyId}</Text></HStack>
             <Button width="100%" size={"sm"} onClick={() => setVis(!vis)}>Show Code here</Button>
             {vis && (
                 <Stack overflowY="scroll" borderColor='gray.200' borderWidth="1px">
-                    <Text fontSize="0.75rem" width="100%" size="0.5rem">
+                    <Text fontSize="0.75rem" height="100%" minHeight="10rem" width="100%" size="0.5rem">
                         {hexToString(signable?.cadence)}
                     </Text>
                 </Stack>
